@@ -7,10 +7,7 @@ import org.springframework.http.*;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
-import uk.ac.ebi.pride.utilities.trackhub.registry.model.Token;
-import uk.ac.ebi.pride.utilities.trackhub.registry.model.TrackDBConfig;
-import uk.ac.ebi.pride.utilities.trackhub.registry.model.TrackHub;
-import uk.ac.ebi.pride.utilities.trackhub.registry.model.URL;
+import uk.ac.ebi.pride.utilities.trackhub.registry.model.*;
 
 import java.util.List;
 import java.util.Map;
@@ -83,6 +80,13 @@ public class TrackHubRegistryClient {
         return response;
     }
 
+    /**
+     * This function publish a trackhub in the ENSEMBL trackHub registry. An example of an url can be found here:
+     * http://ftp.pride.ebi.ac.uk/pride/data/proteogenomics/latest/proteoannotator/trackhub/homo_sapiens/hub.txt
+     *
+     * @param url the url of the public hub.txt
+     * @return if the hub has been update successfully, the following command return true.
+     */
     public boolean updateTrackHub(String url){
         URL trackURL = new URL(url);
         String urlCall = trackHubRegistryProd.getProtocol() + "://" + trackHubRegistryProd.getHostName() + "/api/trackhub";
@@ -91,5 +95,17 @@ public class TrackHubRegistryClient {
         return  response.getStatusCode().value() == 201 && ((List<TrackDBConfig>)response.getBody()).size() == 1;
     }
 
+    /**
+     * This method update/create a new trackhub from a TrackHub Post object that contains the url
+     * to the hub.txt, the type of the trackhub, the assemblies, the type of the search type.
+     * @param trackHub PostTrackHub
+     * @return if the trackhub has been added successfully return true.
+     */
+    public boolean updateTrackHub(PostTrackHub trackHub){
+        String urlCall = trackHubRegistryProd.getProtocol() + "://" + trackHubRegistryProd.getHostName() + "/api/trackhub";
+        ResponseEntity response = restTemplate.exchangePOST(urlCall, trackHub, List.class);
+        logger.debug(response.toString());
+        return  response.getStatusCode().value() == 201 && ((List<TrackDBConfig>)response.getBody()).size() == 1;
+    }
 
 }

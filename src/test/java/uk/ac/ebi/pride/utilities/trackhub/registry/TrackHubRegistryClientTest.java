@@ -7,6 +7,9 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import uk.ac.ebi.pride.utilities.trackhub.registry.model.PostTrackHub;
+import uk.ac.ebi.pride.utilities.trackhub.registry.model.SearchType;
+import uk.ac.ebi.pride.utilities.trackhub.registry.model.TrackType;
 
 import static org.junit.Assert.*;
 
@@ -47,6 +50,20 @@ public class TrackHubRegistryClientTest {
     public void updateTrackHub() throws Exception {
         boolean updateTrue = client.updateTrackHub( "http://ftp.pride.ebi.ac.uk/pride/data/proteogenomics/latest/proteoannotator/trackhub/homo_sapiens/hub.txt");
         Assert.assertTrue(updateTrue);
+    }
+
+    @Test
+    public void createTrackHub() throws Exception {
+
+        PostTrackHub trackHub = new PostTrackHub();
+        trackHub.setUrl("http://ftp.pride.ebi.ac.uk/pride/data/proteogenomics/latest/proteoannotator/trackhub/homo_sapiens/hub.txt");
+
+        trackHub.setType(TrackType.PROTEOMICS);
+        trackHub.setVisbility(SearchType.PRIVATE);
+
+        boolean updateTrue = client.createTrackHub(trackHub);
+        Assert.assertTrue(updateTrue);
+
     }
 
 }
