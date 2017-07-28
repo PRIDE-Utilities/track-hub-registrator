@@ -1,12 +1,25 @@
 package uk.ac.ebi.pride.utilities.trackhub;
 
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.cli.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.ac.ebi.pride.utilities.trackhub.registry.model.Assembly;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import uk.ac.ebi.pride.utilities.trackhub.options.TrackHubOptions;
+import uk.ac.ebi.pride.utilities.trackhub.registry.TrackHubRegistryClient;
+import uk.ac.ebi.pride.utilities.trackhub.registry.TrackHubRegistryProd;
+import uk.ac.ebi.pride.utilities.trackhub.registry.model.PostTrackHub;
 import uk.ac.ebi.pride.utilities.trackhub.registry.model.SearchType;
 import uk.ac.ebi.pride.utilities.trackhub.registry.model.TrackType;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 
 /**
  * This code is licensed under the Apache License, Version 2.0 (the
@@ -25,136 +38,87 @@ public class TrackHubRegisterService {
 
     public static final Logger logger = LoggerFactory.getLogger(TrackHubRegisterService.class);
 
-    private String authToken;
-    private String url;
-    private TrackType postType;
-    private SearchType searchType;
-    private List<Assembly> assemblies;
+
+    public static void main(String[] args){
+
+        TrackHubOptions options = new TrackHubOptions();
+        CommandLineParser parser = new DefaultParser();
+
+        PostTrackHub track = null;
+        TrackHubRegistryClient client;
 
 
+        try {
 
-    /**
-     * Constructor with all the necessary parameters.
-     * @param url The URL of the trackhub, HTTP preferred over FTP.
-     * @param postType The -omics type of the track hub.
-     * @param searchType Should the track hub be visible in Registry search results or not.
-     * @param assemblies The assemblies present on the track hub.
-     */
-    public TrackHubRegisterService(String url, TrackType postType, SearchType searchType,
-                                   List<Assembly> assemblies) {
-        this.url = url;
-        this.postType = postType;
-        this.searchType = searchType;
-        this.assemblies = assemblies;
-    }
+            CommandLine cmd = parser.parse(options, args);
 
-//    /**
-//     * This method logs into the Registry using the supplied credentials. Generates auth token.
-//     *
-//     * @throws IOException Exception when reading/writing JSON to Registry.
-//     * @throws JSONException Exception when reading/writing JSON to Registry.
-//     * @throws HttpException Exception when reading/writing JSON to Registry.
-//     */
-//    public void login() throws IOException, JSONException, HttpException {
-//        System.setProperty("jsse.enableSNIExtension", "false");
-//        logger.info("Attempting to log into the registry.");
-//        CredentialsProvider credsProvider = new BasicCredentialsProvider();
-//        credsProvider.setCredentials(
-//                new AuthScope(server.replaceFirst("https://", ""), AuthScope.ANY_PORT),
-//                new UsernamePasswordCredentials(user, password));
-//        try (CloseableHttpClient httpclient = HttpClients.custom()
-//                .setDefaultCredentialsProvider(credsProvider)
-//                .build()) {
-//            HttpGet httpget = new HttpGet(server + "/api/login");
-//            logger.info("Executing request " + httpget.getRequestLine());
-//            CloseableHttpResponse response = httpclient.execute(httpget);
-//            HttpEntity entity = response.getEntity();
-//            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-//                try (InputStream inputStream = entity.getContent()) {
-//                    StringWriter writer = new StringWriter();
-//                    IOUtils.copy(inputStream, writer, StandardCharsets.UTF_8);
-//                    JSONObject myObject = new JSONObject(writer.toString());
-//                    myObject.get("auth_token");
-//                    this.authToken = myObject.getString("auth_token");
-//                    logger.info("Successfully obtained auth token.");
-//                }
-//            } else {
-//                logger.error("Error when logging in, status code: " + response.getStatusLine().getStatusCode());
-//                logger.error("Reason: " + response.getStatusLine().getReasonPhrase());
-//                throw new HttpException(response.getStatusLine().getReasonPhrase());
-//            }
-//
-//        }
-//    }
+            if(cmd.hasOption(TrackHubOptions.TrackHubOption.FILE_INPUT.getCmd())){
+                String inputName = cmd.getOptionValue(TrackHubOptions.TrackHubOption.FILE_INPUT.getCmd());
+                PostTrackHub trackHub = readParameters(inputName);
 
-    /**
-     * This method logs out of the Registry, using the auth token generated after Login().
-     * @throws IOException Exception when reading/writing JSON to Registry.
-     * @throws HttpException Exception when reading/writing JSON to Registry.
-     */
-    /*public void logout() throws IOException, HttpException {
-        logger.info("Attempting to log out");
-        try (CloseableHttpClient httpclient = HttpClientBuilder.create().build()) {
-            HttpGet httpget = new HttpGet(server + "/api/logout");
-            httpget.setHeader("user", user);
-            httpget.setHeader("Auth-Token", authToken);
-            CloseableHttpResponse response = httpclient.execute(httpget);
-            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                logger.info("Successfully logged out.");
-            } else {
-                logger.error("Error when logging out, status code: " + response.getStatusLine().getStatusCode());
-                logger.error("Reason: " + response.getStatusLine().getReasonPhrase());
-                throw new HttpException(response.getStatusLine().getReasonPhrase());
+            }else if(cmd.hasOption(TrackHubOptions.TrackHubOption.URL.getCmd())){
+                String url = cmd.getOptionValue(TrackHubOptions.TrackHubOption.URL.getCmd());
+
+                String[] assembly = null;
+                if(cmd.hasOption(TrackHubOptions.TrackHubOption.ASSEMBLY.getCmd()))
+                    assembly = cmd.getOptionValues(TrackHubOptions.TrackHubOption.ASSEMBLY.getCmd());
+
+                String visibility = null;
+                if(cmd.hasOption(TrackHubOptions.TrackHubOption.VISIBILITY.getCmd()))
+                    visibility = cmd.getOptionValue(TrackHubOptions.TrackHubOption.VISIBILITY.getCmd());
+
+                String track_type = null;
+                if(cmd.hasOption(TrackHubOptions.TrackHubOption.TRACK_TYPE.getCmd()))
+                    track_type = cmd.getOptionValue(TrackHubOptions.TrackHubOption.TRACK_TYPE.getCmd());
+
+                track = parseTrackHub(url, assembly, visibility, track_type);
+
+            }else{
+                HelpFormatter formatter = new HelpFormatter();
+                formatter.printHelp( "ant", options );
             }
-        }
-    }*/
 
-    /**
-     * This method posts the trackh hub to the Registry, using the auth token generated after Login().
-     * @throws IOException Exception when reading/writing JSON to Registry.
-     * @throws JSONException Exception when reading/writing JSON to Registry.
-     * @throws HttpException Exception when reading/writing JSON to Registry.
-     */
-    /*public void postTrackhub() throws IOException, JSONException, HttpException {
-        logger.info("Attempting to post track hub.");
-        try (CloseableHttpClient httpclient = HttpClientBuilder.create().build()) {
-            HttpPost httppost = new HttpPost(server + "/api/trackhub");
-            httppost.setHeader("User", user);
-            httppost.setHeader("Auth-Token", authToken);
-            JSONObject json = new JSONObject();
-            json.put("url", url);
-            json.put("type", postType);
-            json.put("public", searchType.getValue());
-            JSONObject jsonAssemblies = new JSONObject();
-            if (assemblies.size()>0) {
-                assemblies.forEach(assembly -> {
-                    try {
-                        jsonAssemblies.put(assembly.name(), assembly.getINSDC());
-                    } catch (JSONException e) {
-                        logger.error("Problem when adding assemblies. " + e);
-                    }
-                });
-                json.put("assembliesNames", jsonAssemblies);
-            } else {
-                logger.error("Unable to read assemblies.");
+            if(track != null){
+                ApplicationContext ctx = new ClassPathXmlApplicationContext("spring/app-context.xml");
+                TrackHubRegistryProd trackHubWsProd = (TrackHubRegistryProd) ctx.getBean("trackHubRegistryProd");
+                client = new TrackHubRegistryClient(trackHubWsProd);
+                boolean status = client.updateTrackHub(track);
+                if(status)
+                    logger.info("The TrackHub has been added to the registry.");
             }
-            StringEntity stringEntity = new StringEntity(json.toString());
-            stringEntity.setContentType("application/json");
-            httppost.setEntity(stringEntity);
-            Arrays.stream(httppost.getAllHeaders()).forEach(header -> logger.info( header.getName() + " : " + header.getValue()));
-            HttpResponse response = httpclient.execute(httppost);
-            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED) {
-                logger.info("Successfully posted track hub to registry.");
-                logger.debug("ReasonPhrase: " + response.getStatusLine().getReasonPhrase());
-                logger.debug("Content: " + IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8));  // direct link to Genome Browser
-            } else {
-                logger.error("Error when posting track hub to registry, status code: " + response.getStatusLine().getStatusCode());
-                logger.error("ReasonPhrase: " + response.getStatusLine().getReasonPhrase());
-                logger.error("Content: " + IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8));
-                throw new HttpException(response.getStatusLine().getReasonPhrase());
-            }
+
+
+        } catch (ParseException | IOException e) {
+            logger.error(e.getMessage());
+            e.printStackTrace();
         }
     }
-*/
+
+    private static PostTrackHub parseTrackHub(String url, String[] assembly, String visibility, String track_type) {
+        PostTrackHub track = new PostTrackHub();
+        if(url != null)
+            track.setUrl(url);
+        if(visibility.equalsIgnoreCase("PUBLIC") || visibility.equalsIgnoreCase("PRIVATE"))
+            track.setVisbility(SearchType.findStringValue(visibility));
+        else
+            track.setVisbility(SearchType.findIntValue(new Integer(visibility)));
+        track.setType(TrackType.findValue(track_type));
+
+        Map<String, String> assemblies = new HashMap<>();
+        if(assembly != null && assembly.length > 0 ){
+            for(String assemblyEntry: assembly)
+                if(assemblyEntry.split("=").length == 2)
+                    assemblies.put(assemblyEntry.split("=")[0], assemblyEntry.split("=")[1]);
+        }
+        track.setAssemblies(assemblies);
+        return track;
+
+    }
+
+    private static PostTrackHub readParameters(String inputName) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return ((PostTrackHub)objectMapper.readValue(new File(inputName), PostTrackHub.class));
+    }
+
 
 }

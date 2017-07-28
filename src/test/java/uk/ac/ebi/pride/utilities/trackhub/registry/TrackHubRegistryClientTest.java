@@ -61,7 +61,7 @@ public class TrackHubRegistryClientTest {
         trackHub.setType(TrackType.PROTEOMICS);
         trackHub.setVisbility(SearchType.PRIVATE);
 
-        boolean updateTrue = client.createTrackHub(trackHub);
+        boolean updateTrue = client.updateTrackHub(trackHub);
         Assert.assertTrue(updateTrue);
 
     }

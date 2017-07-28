@@ -26,4 +26,18 @@ public enum SearchType {
     public int getValue() {
         return this.value;
     }
+
+    public static SearchType findStringValue(String visibility) {
+        if(visibility.equalsIgnoreCase("PUBLIC"))
+            return PUBLIC;
+        if(visibility.equalsIgnoreCase("PRIVATE"))
+            return PRIVATE;
+        return PRIVATE;
+    }
+
+    public static SearchType findIntValue(int visibility) {
+        if(visibility == PUBLIC.value)
+            return PUBLIC;
+        return PRIVATE;
+    }
 }
