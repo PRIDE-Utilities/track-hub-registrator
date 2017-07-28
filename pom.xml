@@ -80,6 +80,7 @@
                 <filtering>true</filtering>
                 <includes>
                     <include>prop/*.properties</include>
+                    <include>spring/*.xml</include>
                 </includes>
             </resource>
         </resources>
