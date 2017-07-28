@@ -21,11 +21,11 @@ public class TrackHubOptions extends Options {
 
     public enum TrackHubOption{
 
-        URL("url", "url", "URL of the public TrackHub in (e.g. \n http://ftp.pride.ebi.ac.uk/pride/data/proteogenomics/latest/proteoannotator/trackhub/homo_sapiens/hub.txt)"),
-        TRACK_TYPE("track_type", "track_type", "Type of track: Proteomics, Genomics, Transcriptomics"),
-        VISIBILITY("visibility", "visibility", "Visibility of the track, it can be public or private"),
-        ASSEMBLY("assembly", "assembly", "Map of key-value pairs assembly (e.g. --assembly hg38=GCA_000001405.15 ricCom1=GCA_000151685.2)"),
-        FILE_INPUT("file_parameters", "file_parameters", "JSON file input with all the paramters");
+        URL       ("url"            , "url", "URL of the public TrackHub in (e.g. \n http://ftp.pride.ebi.ac.uk/pride/data/proteogenomics/latest/proteoannotator/trackhub/homo_sapiens/hub.txt)"),
+        TRACK_TYPE("track_type"     , "track_type", "Type of track: Proteomics, Genomics, Transcriptomics"),
+        VISIBILITY("visibility"     , "visibility", "Visibility of the track, it can be public or private"),
+        ASSEMBLY  ("assembly"       , "assembly", "Map of key-value pairs assembly (e.g. --assembly hg38=GCA_000001405.15 ricCom1=GCA_000151685.2)"),
+        FILE_INPUT("parameters"     , "parameters", "JSON file input with all the paramters");
 
         private String name;
         private String cmd;
@@ -64,11 +64,11 @@ public class TrackHubOptions extends Options {
 
     public TrackHubOptions(){
         super();
-        addOption(TrackHubOption.URL.getCmd(), TrackHubOption.URL.getMessage());
-        addOption(TrackHubOption.TRACK_TYPE.getCmd(), TrackHubOption.TRACK_TYPE.getMessage());
-        addOption(TrackHubOption.VISIBILITY.getCmd(), TrackHubOption.VISIBILITY.getMessage());
-        addOption(TrackHubOption.ASSEMBLY.getCmd(), TrackHubOption.ASSEMBLY.getMessage());
-        addOption(TrackHubOption.FILE_INPUT.getCmd(), TrackHubOption.FILE_INPUT.getMessage());
+        addOption(TrackHubOption.URL.getCmd(),true,  TrackHubOption.URL.getMessage());
+        addOption(TrackHubOption.TRACK_TYPE.getCmd(),true, TrackHubOption.TRACK_TYPE.getMessage());
+        addOption(TrackHubOption.VISIBILITY.getCmd(), true, TrackHubOption.VISIBILITY.getMessage());
+        addOption(TrackHubOption.ASSEMBLY.getCmd(), true, TrackHubOption.ASSEMBLY.getMessage());
+        addOption(TrackHubOption.FILE_INPUT.getCmd(), true, TrackHubOption.FILE_INPUT.getMessage());
     }
 
 

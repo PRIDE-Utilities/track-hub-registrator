@@ -54,7 +54,7 @@ public class TrackHubRegisterService {
 
             if(cmd.hasOption(TrackHubOptions.TrackHubOption.FILE_INPUT.getCmd())){
                 String inputName = cmd.getOptionValue(TrackHubOptions.TrackHubOption.FILE_INPUT.getCmd());
-                PostTrackHub trackHub = readParameters(inputName);
+                track = readParameters(inputName);
 
             }else if(cmd.hasOption(TrackHubOptions.TrackHubOption.URL.getCmd())){
                 String url = cmd.getOptionValue(TrackHubOptions.TrackHubOption.URL.getCmd());
