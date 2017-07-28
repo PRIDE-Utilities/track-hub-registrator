@@ -1,0 +1,95 @@
+package uk.ac.ebi.pride.utilities.trackhub.registry;
+
+import org.apache.commons.codec.binary.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.*;
+import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.web.client.RestTemplate;
+import uk.ac.ebi.pride.utilities.trackhub.registry.model.Token;
+import uk.ac.ebi.pride.utilities.trackhub.registry.model.TrackDBConfig;
+import uk.ac.ebi.pride.utilities.trackhub.registry.model.TrackHub;
+import uk.ac.ebi.pride.utilities.trackhub.registry.model.URL;
+
+import java.util.List;
+import java.util.Map;
+
+/**
+ * This code is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * ==Overview==
+ * <p>
+ *
+ * The ENSEMBL TrackHu Client contains all the methods that are needed to interact with the ENSEMBL TrackHub Registry, including
+ * functions to Login, query all registries for an specific user, create a trackHub and Update it.
+ *
+ * <p>
+ * Created by ypriverol (ypriverol@gmail.com) on 27/07/2017.
+ */
+public class TrackHubRegistryClient {
+
+    private static final Logger logger = LoggerFactory.getLogger(TrackHubRegistryClient.class);
+
+    private AutorizedTokenRestTemplate restTemplate;
+
+    private TrackHubRegistryProd trackHubRegistryProd;
+
+
+    public TrackHubRegistryClient(TrackHubRegistryProd config) {
+        System.setProperty("jsse.enableSNIExtension", "false");
+        this.trackHubRegistryProd = config;
+        initAutorizedTokenRestTemplate();
+    }
+
+    private void initAutorizedTokenRestTemplate() {
+        String url = trackHubRegistryProd.getProtocol() + "://" + trackHubRegistryProd.getHostName() + "/api/login";
+        RestTemplate passwordRest = new RestTemplate();
+        ResponseEntity<Token> response = passwordRest.exchange(url, HttpMethod.GET, new HttpEntity<>(getHeaders()), Token.class);
+        String token = response.getBody().getAuth_token();
+
+
+        logger.info("INFO | SUCCESS | The Trackhub client has been connected successfully to the ENSMEBL TranckHub service !!!");
+        logger.debug(token);
+
+        restTemplate = new AutorizedTokenRestTemplate(token, trackHubRegistryProd.getUser());
+    }
+
+    private HttpHeaders getHeaders(){
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Basic " + getBase64Credentials());
+        return headers;
+    }
+
+    private String getBase64Credentials(){
+        String plainCreds = trackHubRegistryProd.getUser() + ":" + trackHubRegistryProd.getPassword();
+        byte[] plainCredsBytes = plainCreds.getBytes();
+        byte[] base64CredsBytes = Base64.encodeBase64(plainCredsBytes);
+        return new String(base64CredsBytes);
+    }
+
+    /**
+     * This function retrieve all the trackhubs public in ENSEMBL Trackhub for an specific user.
+     * @return List of ENSEMBL TrackHubs.
+     */
+    public List<TrackHub> getAllTrackHubs(){
+        String url = trackHubRegistryProd.getProtocol() + "://" + trackHubRegistryProd.getHostName() + "/api/trackhub";
+        List<TrackHub> response = restTemplate.exchangeGET(url, List.class);
+        logger.info("INFO | SUCCESS | Number of TrackHubs: " + response.size());
+        return response;
+    }
+
+    public boolean updateTrackHub(String url){
+        URL trackURL = new URL(url);
+        String urlCall = trackHubRegistryProd.getProtocol() + "://" + trackHubRegistryProd.getHostName() + "/api/trackhub";
+        ResponseEntity response = restTemplate.exchangePOST(urlCall, trackURL, List.class);
+        logger.debug(response.toString());
+        return  response.getStatusCode().value() == 201 && ((List<TrackDBConfig>)response.getBody()).size() == 1;
+    }
+
+
+}
