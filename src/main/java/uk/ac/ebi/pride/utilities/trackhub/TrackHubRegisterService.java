@@ -46,11 +46,21 @@ public class TrackHubRegisterService {
 
         PostTrackHub track = null;
         TrackHubRegistryClient client;
+        String user = null;
+        String password = null;
 
 
         try {
 
             CommandLine cmd = parser.parse(options, args);
+
+            if(cmd.hasOption(TrackHubOptions.TrackHubOption.USER.getCmd()))
+                user = cmd.getOptionValue(TrackHubOptions.TrackHubOption.USER.getCmd());
+
+            if(cmd.hasOption(TrackHubOptions.TrackHubOption.PASSWORD.getCmd()))
+                password = cmd.getOptionValue(TrackHubOptions.TrackHubOption.PASSWORD.getCmd());
+
+
 
             if(cmd.hasOption(TrackHubOptions.TrackHubOption.FILE_INPUT.getCmd())){
                 String inputName = cmd.getOptionValue(TrackHubOptions.TrackHubOption.FILE_INPUT.getCmd());
@@ -81,6 +91,12 @@ public class TrackHubRegisterService {
             if(track != null){
                 ApplicationContext ctx = new ClassPathXmlApplicationContext("spring/app-context.xml");
                 TrackHubRegistryProd trackHubWsProd = (TrackHubRegistryProd) ctx.getBean("trackHubRegistryProd");
+
+                if(user != null)
+                    trackHubWsProd.setUser(user);
+                if(password != null)
+                    trackHubWsProd.setPassword(password);
+
                 client = new TrackHubRegistryClient(trackHubWsProd);
                 boolean status = client.updateTrackHub(track);
                 if(status)

@@ -12,7 +12,7 @@ import uk.ac.ebi.pride.utilities.trackhub.registry.model.TrackHub;
  * <p>
  * ==Overview==
  * <p>
- * This class
+ * This class contains the options for the commandline tool.
  * <p>
  * Created by ypriverol (ypriverol@gmail.com) on 28/07/2017.
  */
@@ -24,8 +24,10 @@ public class TrackHubOptions extends Options {
         URL       ("url"            , "url", "URL of the public TrackHub in (e.g. \n http://ftp.pride.ebi.ac.uk/pride/data/proteogenomics/latest/proteoannotator/trackhub/homo_sapiens/hub.txt)"),
         TRACK_TYPE("track_type"     , "track_type", "Type of track: Proteomics, Genomics, Transcriptomics"),
         VISIBILITY("visibility"     , "visibility", "Visibility of the track, it can be public or private"),
-        ASSEMBLY  ("assembly"       , "assembly", "Map of key-value pairs assembly (e.g. --assembly hg38=GCA_000001405.15 ricCom1=GCA_000151685.2)"),
-        FILE_INPUT("parameters"     , "parameters", "JSON file input with all the paramters");
+        ASSEMBLY  ("assembly"       , "assembly", "Map of key-value pairs assembly (e.g. -assembly hg38=GCA_000001405.15 ricCom1=GCA_000151685.2)"),
+        USER      ("user"           , "user", "User of the ENSEMBL TrackHub Registry"),
+        PASSWORD  ("password"       , "password", "Password to access ENSEMBL TrackHub Registry"),
+        FILE_INPUT("parameters"     , "parameters", "JSON file input with all the parameters");
 
         private String name;
         private String cmd;
@@ -69,6 +71,8 @@ public class TrackHubOptions extends Options {
         addOption(TrackHubOption.VISIBILITY.getCmd(), true, TrackHubOption.VISIBILITY.getMessage());
         addOption(TrackHubOption.ASSEMBLY.getCmd(), true, TrackHubOption.ASSEMBLY.getMessage());
         addOption(TrackHubOption.FILE_INPUT.getCmd(), true, TrackHubOption.FILE_INPUT.getMessage());
+        addOption(TrackHubOption.PASSWORD.getCmd(), true, TrackHubOption.PASSWORD.getMessage());
+        addOption(TrackHubOption.USER.getCmd(), true, TrackHubOption.USER.getMessage());
     }
 
 

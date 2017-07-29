@@ -13,7 +13,7 @@ import org.springframework.web.client.RestTemplate;
  * <p>
  * ==Overview==
  * <p>
- * This class
+ * This class handle the authorized connection to RestTemplate.
  * <p>
  * Created by ypriverol (ypriverol@gmail.com) on 28/07/2017.
  */
