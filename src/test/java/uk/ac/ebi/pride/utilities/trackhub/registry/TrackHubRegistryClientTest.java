@@ -2,8 +2,11 @@ package uk.ac.ebi.pride.utilities.trackhub.registry;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -26,30 +29,27 @@ import uk.ac.ebi.pride.utilities.trackhub.registry.model.TrackType;
  */
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:test-context.xml"})
+@ContextConfiguration(locations = { "classpath:/test-context.xml" })
 public class TrackHubRegistryClientTest {
 
+    Logger logger = LoggerFactory.getLogger(TrackHubRegistryClientTest.class);
+
     @Autowired
-    TrackHubRegistryProd trackHubRegistryProd;
     private TrackHubRegistryClient client;
-
-
-    @Before
-    public void Setup(){
-         client = new TrackHubRegistryClient(trackHubRegistryProd);
-    }
 
     @Test
     public void getAllTrackHubs() throws Exception {
         Assert.assertTrue(client.getAllTrackHubs().size() > 0 );
     }
 
+    @Ignore
     @Test
     public void updateTrackHub() throws Exception {
         boolean updateTrue = client.updateTrackHub( "http://ftp.pride.ebi.ac.uk/pride/data/proteogenomics/latest/proteoannotator/trackhub/homo_sapiens/hub.txt");
         Assert.assertTrue(updateTrue);
     }
 
+    @Ignore
     @Test
     public void createTrackHub() throws Exception {
 

@@ -13,4 +13,8 @@
         <constructor-arg index="3" value="${track.password}"/>
     </bean>
 
+    <bean id="client" class="uk.ac.ebi.pride.utilities.trackhub.registry.TrackHubRegistryClient">
+        <constructor-arg index="0" ref="trackHubRegistryProd"/>
+    </bean>
+
 </beans>

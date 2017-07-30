@@ -61,4 +61,14 @@ public class TrackHubRegistryProd {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    @Override
+    public String toString() {
+        return "TrackHubRegistryProd{" +
+                "hostName='" + hostName + '\'' +
+                ", protocol='" + protocol + '\'' +
+                ", user='" + user + '\'' +
+                ", password='" + password + '\'' +
+                '}';
+    }
 }
