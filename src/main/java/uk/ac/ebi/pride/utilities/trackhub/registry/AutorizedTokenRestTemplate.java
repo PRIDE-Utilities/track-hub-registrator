@@ -39,8 +39,7 @@ public class AutorizedTokenRestTemplate extends RestTemplate{
 
     private <T> ResponseEntity<T> authorizedPOSTRestCall(RestTemplate restTemplate, String url, Object object, Class<T> responseType) {
         HttpEntity<T> httpEntity = new HttpEntity(object, headers);
-        ResponseEntity<T> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity, responseType);
-        return response;
+        return restTemplate.exchange(url, HttpMethod.POST, httpEntity, responseType);
     }
 
     private <T> T authorizedRestCall(RestTemplate restTemplate, String url, Class<T> responseType) {

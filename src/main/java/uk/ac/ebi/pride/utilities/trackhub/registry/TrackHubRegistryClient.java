@@ -4,13 +4,11 @@ import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
-import org.springframework.http.client.ClientHttpRequestFactory;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 import uk.ac.ebi.pride.utilities.trackhub.registry.model.*;
 
+import java.io.PrintStream;
 import java.util.List;
-import java.util.Map;
 
 /**
  * This code is licensed under the Apache License, Version 2.0 (the
@@ -96,8 +94,24 @@ public class TrackHubRegistryClient {
     }
 
     /**
-     * This method update/create a new trackhub from a TrackHub Post object that contains the url
-     * to the hub.txt, the type of the trackhub, the assemblies, the type of the search type.
+     * This method update/create a new TrackHub from a TrackHub Post object that contains the url
+     * to the hub.txt, the type of the trackhub, the assemblies, the type of the search type. The
+     * @param trackHub PostTrackHub
+     * @param outputFile File to output the result of the push to ensembl
+     * @return if the trackhub has been added successfully return true.
+     */
+    public boolean updateTrackHub(PostTrackHub trackHub, PrintStream outputFile){
+        String urlCall = trackHubRegistryProd.getProtocol() + "://" + trackHubRegistryProd.getHostName() + "/api/trackhub";
+        ResponseEntity response = restTemplate.exchangePOST(urlCall, trackHub, List.class);
+        logger.debug(response.toString());
+        outputFile.println(response);
+        outputFile.flush();
+        return  response.getStatusCode().value() == 201 && ((List<TrackDBConfig>)response.getBody()).size() == 1;
+    }
+
+    /**
+     * This method update/create a new TrackHub from a TrackHub Post object that contains the url
+     * to the hub.txt, the type of the trackhub, the assemblies, the type of the search type. The
      * @param trackHub PostTrackHub
      * @return if the trackhub has been added successfully return true.
      */

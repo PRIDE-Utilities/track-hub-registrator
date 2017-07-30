@@ -9,7 +9,7 @@ package uk.ac.ebi.pride.utilities.trackhub.registry.model;
  * <p>
  * ==Overview==
  * <p>
- * This enum contains all the type of TrackHubs available in ENSEMBL
+ * This enum contains all the type of TrackHubs available in ENSEMBL TrackHub
  * <p>
  * Created by ypriverol (ypriverol@gmail.com) on 27/07/2017.
  */
@@ -22,7 +22,7 @@ public enum TrackType {
 
     public static TrackType findValue(String track_type) {
 
-        if(track_type != null || track_type.equalsIgnoreCase(GENOMICS.toString()))
+        if(track_type == null || track_type.equalsIgnoreCase(GENOMICS.toString()))
             return GENOMICS;
 
         if( track_type.equalsIgnoreCase(EPIGENOMICS.toString()))

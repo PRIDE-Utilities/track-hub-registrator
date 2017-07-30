@@ -1,6 +1,5 @@
 package uk.ac.ebi.pride.utilities.trackhub.registry.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -25,7 +24,7 @@ public class URL {
     @JsonProperty("url")
     String url;
 
-    public URL(){};
+    public URL(){}
 
     public URL(String url) {
         this.url = url;

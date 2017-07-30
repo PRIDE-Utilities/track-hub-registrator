@@ -11,8 +11,6 @@ import uk.ac.ebi.pride.utilities.trackhub.registry.model.PostTrackHub;
 import uk.ac.ebi.pride.utilities.trackhub.registry.model.SearchType;
 import uk.ac.ebi.pride.utilities.trackhub.registry.model.TrackType;
 
-import static org.junit.Assert.*;
-
 /**
  * This code is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance

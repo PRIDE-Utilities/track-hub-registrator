@@ -1,7 +1,6 @@
 package uk.ac.ebi.pride.utilities.trackhub.options;
 
 import org.apache.commons.cli.Options;
-import uk.ac.ebi.pride.utilities.trackhub.registry.model.TrackHub;
 
 /**
  * This code is licensed under the Apache License, Version 2.0 (the
@@ -27,6 +26,7 @@ public class TrackHubOptions extends Options {
         ASSEMBLY  ("assembly"       , "assembly", "Map of key-value pairs assembly (e.g. -assembly hg38=GCA_000001405.15 ricCom1=GCA_000151685.2)"),
         USER      ("user"           , "user", "User of the ENSEMBL TrackHub Registry"),
         PASSWORD  ("password"       , "password", "Password to access ENSEMBL TrackHub Registry"),
+        OUTPUT    ("output"         , "output", "Output file to export the status of the the creation/update Task"),
         FILE_INPUT("parameters"     , "parameters", "JSON file input with all the parameters");
 
         private String name;
@@ -73,6 +73,7 @@ public class TrackHubOptions extends Options {
         addOption(TrackHubOption.FILE_INPUT.getCmd(), true, TrackHubOption.FILE_INPUT.getMessage());
         addOption(TrackHubOption.PASSWORD.getCmd(), true, TrackHubOption.PASSWORD.getMessage());
         addOption(TrackHubOption.USER.getCmd(), true, TrackHubOption.USER.getMessage());
+        addOption(TrackHubOption.OUTPUT.getCmd(), true, TrackHubOption.OUTPUT.getMessage());
     }
 
 

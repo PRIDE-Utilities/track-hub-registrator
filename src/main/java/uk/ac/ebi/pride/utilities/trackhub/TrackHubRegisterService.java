@@ -16,8 +16,8 @@ import uk.ac.ebi.pride.utilities.trackhub.registry.model.TrackType;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -30,7 +30,7 @@ import java.util.Map;
  * <p>
  * ==Overview==
  * <p>
- * This class register a trackhub into ensembl using the corresponding URL and
+ * This class register a TrackHub into ensembl using the corresponding URL and
  * <p>
  * Created by ypriverol (ypriverol@gmail.com) on 27/07/2017.
  */
@@ -49,6 +49,8 @@ public class TrackHubRegisterService {
         String user = null;
         String password = null;
 
+        PrintStream outputFile = System.out;
+
 
         try {
 
@@ -60,7 +62,8 @@ public class TrackHubRegisterService {
             if(cmd.hasOption(TrackHubOptions.TrackHubOption.PASSWORD.getCmd()))
                 password = cmd.getOptionValue(TrackHubOptions.TrackHubOption.PASSWORD.getCmd());
 
-
+            if(cmd.hasOption(TrackHubOptions.TrackHubOption.OUTPUT.getCmd()))
+                outputFile = new PrintStream(new File(cmd.getOptionValue(TrackHubOptions.TrackHubOption.OUTPUT.getCmd())));
 
             if(cmd.hasOption(TrackHubOptions.TrackHubOption.FILE_INPUT.getCmd())){
                 String inputName = cmd.getOptionValue(TrackHubOptions.TrackHubOption.FILE_INPUT.getCmd());
@@ -98,7 +101,7 @@ public class TrackHubRegisterService {
                     trackHubWsProd.setPassword(password);
 
                 client = new TrackHubRegistryClient(trackHubWsProd);
-                boolean status = client.updateTrackHub(track);
+                boolean status = client.updateTrackHub(track, outputFile);
                 if(status)
                     logger.info("The TrackHub has been added to the registry.");
             }
@@ -107,6 +110,10 @@ public class TrackHubRegisterService {
         } catch (ParseException | IOException e) {
             logger.error(e.getMessage());
             e.printStackTrace();
+
+            HelpFormatter formatter = new HelpFormatter();
+            formatter.printHelp( "ant", options );
+
         }
     }
 
@@ -133,7 +140,7 @@ public class TrackHubRegisterService {
 
     private static PostTrackHub readParameters(String inputName) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
-        return ((PostTrackHub)objectMapper.readValue(new File(inputName), PostTrackHub.class));
+        return objectMapper.readValue(new File(inputName), PostTrackHub.class);
     }
 
 
