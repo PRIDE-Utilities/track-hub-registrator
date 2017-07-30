@@ -48,7 +48,7 @@ public class TrackHubRegistryClient {
         String token = response.getBody().getAuth_token();
 
 
-        logger.info("INFO | SUCCESS | The Trackhub client has been connected successfully to the ENSMEBL TranckHub service !!!");
+        logger.debug("INFO | SUCCESS | The Trackhub client has been connected successfully to the ENSMEBL TranckHub service !!!");
         logger.debug(token);
 
         restTemplate = new AutorizedTokenRestTemplate(token, trackHubRegistryProd.getUser());
@@ -74,7 +74,7 @@ public class TrackHubRegistryClient {
     public List<TrackHub> getAllTrackHubs(){
         String url = trackHubRegistryProd.getProtocol() + "://" + trackHubRegistryProd.getHostName() + "/api/trackhub";
         List<TrackHub> response = restTemplate.exchangeGET(url, List.class);
-        logger.info("INFO | SUCCESS | Number of TrackHubs: " + response.size());
+        logger.debug("INFO | SUCCESS | Number of TrackHubs: " + response.size());
         return response;
     }
 

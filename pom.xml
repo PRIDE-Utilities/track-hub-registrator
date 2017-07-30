@@ -37,6 +37,7 @@
             <version>${uk.ac.ebi.pride.architectural-pride-tdd.version}</version>
             <scope>test</scope>
         </dependency>
+
         <!-- jackson for json  -->
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
@@ -46,10 +47,23 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -81,6 +95,7 @@
                 <includes>
                     <include>prop/*.properties</include>
                     <include>spring/*.xml</include>
+                    <include>logback.xml</include>
                 </includes>
             </resource>
         </resources>
