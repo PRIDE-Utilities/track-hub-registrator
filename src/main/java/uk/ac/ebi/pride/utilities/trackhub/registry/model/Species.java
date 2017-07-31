@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Species {
 
     @JsonProperty("scientific_name")
-    String sicentificName;
+    String scientificName;
 
     @JsonProperty("common_name")
     String commonName;
@@ -28,12 +28,12 @@ public class Species {
     @JsonProperty("tax_id")
     String taxId;
 
-    public String getSicentificName() {
-        return sicentificName;
+    public String getScientificName() {
+        return scientificName;
     }
 
-    public void setSicentificName(String sicentificName) {
-        this.sicentificName = sicentificName;
+    public void setScientificName(String scientificName) {
+        this.scientificName = scientificName;
     }
 
     public String getCommonName() {
@@ -55,7 +55,7 @@ public class Species {
     @Override
     public String toString() {
         return "Species{" +
-                "sicentificName='" + sicentificName + '\'' +
+                "scientificName='" + scientificName + '\'' +
                 ", commonName='" + commonName + '\'' +
                 ", taxId='" + taxId + '\'' +
                 '}';

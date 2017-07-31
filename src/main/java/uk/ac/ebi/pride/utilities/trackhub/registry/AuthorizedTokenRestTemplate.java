@@ -17,13 +17,13 @@ import org.springframework.web.client.RestTemplate;
  * <p>
  * Created by ypriverol (ypriverol@gmail.com) on 28/07/2017.
  */
-public class AutorizedTokenRestTemplate extends RestTemplate{
+public class AuthorizedTokenRestTemplate extends RestTemplate{
 
     private String token;
     private String username;
     private HttpHeaders headers;
 
-    public AutorizedTokenRestTemplate(String token, String username){
+    public AuthorizedTokenRestTemplate(String token, String username){
         this.token = token;
         this.username = username;
         initHeaders();

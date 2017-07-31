@@ -30,7 +30,7 @@ import java.util.Map;
  * <p>
  * ==Overview==
  * <p>
- * This class register a TrackHub into ensembl using the corresponding URL and
+ * This class register a TrackHub into ENSEMBL using the corresponding URL and
  * <p>
  * Created by ypriverol (ypriverol@gmail.com) on 27/07/2017.
  */
@@ -105,7 +105,6 @@ public class TrackHubRegisterService {
                 if(status)
                     logger.info("The TrackHub has been added to the registry.");
             }
-
 
         } catch (ParseException | IOException e) {
             logger.error(e.getMessage());

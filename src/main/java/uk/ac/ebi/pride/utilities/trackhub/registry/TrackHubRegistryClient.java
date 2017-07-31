@@ -30,10 +30,9 @@ public class TrackHubRegistryClient {
 
     private static final Logger logger = LoggerFactory.getLogger(TrackHubRegistryClient.class);
 
-    private AutorizedTokenRestTemplate restTemplate;
+    private AuthorizedTokenRestTemplate restTemplate;
 
-    private TrackHubRegistryProd trackHubRegistryProd;
-
+    private final TrackHubRegistryProd trackHubRegistryProd;
 
     public TrackHubRegistryClient(TrackHubRegistryProd config) {
         System.setProperty("jsse.enableSNIExtension", "false");
@@ -51,7 +50,7 @@ public class TrackHubRegistryClient {
         logger.debug("INFO | SUCCESS | The Trackhub client has been connected successfully to the ENSMEBL TranckHub service !!!");
         logger.debug(token);
 
-        restTemplate = new AutorizedTokenRestTemplate(token, trackHubRegistryProd.getUser());
+        restTemplate = new AuthorizedTokenRestTemplate(token, trackHubRegistryProd.getUser());
     }
 
     private HttpHeaders getHeaders(){
