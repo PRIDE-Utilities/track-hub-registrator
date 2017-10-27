@@ -41,12 +41,27 @@ public class TrackHubRegistryClientTest {
         Assert.assertTrue(client.getAllTrackHubs().size() > 0 );
     }
 
-    @Ignore
+
     @Test
     public void updateTrackHub() throws Exception {
         boolean updateTrue = client.updateTrackHub( "http://ftp.pride.ebi.ac.uk/pride/data/proteogenomics/latest/proteoannotator/trackhub/homo_sapiens/hub.txt");
         Assert.assertTrue(updateTrue);
     }
+
+
+    @Test
+    public void updateTrackHubNew() throws Exception {
+        PostTrackHub trackHub = new PostTrackHub();
+        trackHub.setUrl("http://ftp.pride.ebi.ac.uk/pride/data/cluster/trackhubs/2017-09/hub.txt");
+
+        trackHub.setType(TrackType.PROTEOMICS);
+        trackHub.setVisbility(SearchType.PRIVATE);
+
+        boolean updateTrue = client.updateTrackHub(trackHub);
+        Assert.assertTrue(updateTrue);
+    }
+
+
 
     @Ignore
     @Test

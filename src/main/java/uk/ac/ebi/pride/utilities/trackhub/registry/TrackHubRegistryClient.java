@@ -7,7 +7,11 @@ import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 import uk.ac.ebi.pride.utilities.trackhub.registry.model.*;
 
+import javax.net.ssl.*;
 import java.io.PrintStream;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.X509Certificate;
 import java.util.List;
 
 /**
@@ -41,6 +45,7 @@ public class TrackHubRegistryClient {
     }
 
     private void initAutorizedTokenRestTemplate() {
+
         String url = trackHubRegistryProd.getProtocol() + "://" + trackHubRegistryProd.getHostName() + "/api/login";
         RestTemplate passwordRest = new RestTemplate();
         ResponseEntity<Token> response = passwordRest.exchange(url, HttpMethod.GET, new HttpEntity<>(getHeaders()), Token.class);
@@ -119,6 +124,45 @@ public class TrackHubRegistryClient {
         ResponseEntity response = restTemplate.exchangePOST(urlCall, trackHub, List.class);
         logger.debug(response.toString());
         return  response.getStatusCode().value() == 201 && ((List<TrackDBConfig>)response.getBody()).size() == 1;
+    }
+
+    static {
+        disableSslVerification();
+    }
+
+    private static void disableSslVerification() {
+        try{
+            // Create a trust manager that does not validate certificate chains
+            TrustManager[] trustAllCerts = new TrustManager[] {new X509TrustManager() {
+                public X509Certificate[] getAcceptedIssuers() {
+                    return null;
+                }
+                public void checkClientTrusted(X509Certificate[] certs, String authType) {
+                }
+                public void checkServerTrusted(X509Certificate[] certs, String authType) {
+                }
+            }
+            };
+
+            // Install the all-trusting trust manager
+            SSLContext sc = SSLContext.getInstance("SSL");
+            sc.init(null, trustAllCerts, new java.security.SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+
+            // Create all-trusting host name verifier
+            HostnameVerifier allHostsValid = new HostnameVerifier() {
+                public boolean verify(String hostname, SSLSession session) {
+                    return true;
+                }
+            };
+
+            // Install the all-trusting host verifier
+            HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (KeyManagementException e) {
+            e.printStackTrace();
+        }
     }
 
 }

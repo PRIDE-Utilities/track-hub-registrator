@@ -4,6 +4,8 @@ import org.springframework.http.*;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import javax.net.ssl.HttpsURLConnection;
+
 /**
  * This code is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
@@ -27,6 +29,7 @@ public class AuthorizedTokenRestTemplate extends RestTemplate{
         this.token = token;
         this.username = username;
         initHeaders();
+        HttpsURLConnection.setDefaultHostnameVerifier ((hostname, session) -> true);
     }
 
     public <T> T exchangeGET(String url, Class<T> responseType) throws RestClientException {
